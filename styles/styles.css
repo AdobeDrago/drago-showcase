@@ -12,16 +12,22 @@
 
 :root {
   /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
+  --background-color: #0d0d0d;
+  --light-color: #1a1a1a;
+  --dark-color: #888;
+  --text-color: #fff;
+  --link-color: #fa0f00;
+  --link-hover-color: #c50c00;
+
+  /* brand accents */
+  --color-accent-red: #fa0f00;
+  --color-accent-yellow: #ffb900;
+  --color-accent-blue: #4d9eff;
+  --color-border: #2a2a2a;
 
   /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
+  --body-font-family: adobe-clean, adobe-clean-fallback, sans-serif;
+  --heading-font-family: adobe-clean-semicn, adobe-clean-semicn-fallback, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -29,10 +35,10 @@
   --body-font-size-xs: 17px;
 
   /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
+  --heading-font-size-xxl: 60px;
+  --heading-font-size-xl: 48px;
+  --heading-font-size-l: 36px;
+  --heading-font-size-m: 28px;
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
@@ -42,16 +48,16 @@
   --header-height: var(--nav-height);
 }
 
-/* fallback fonts */
+/* fallback fonts (sync, for LCP stability) */
 @font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
+  font-family: adobe-clean-semicn-fallback;
+  size-adjust: 94%;
   src: local('Arial');
 }
 
 @font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
+  font-family: adobe-clean-fallback;
+  size-adjust: 100%;
   src: local('Arial');
 }
 
@@ -63,10 +69,10 @@
     --body-font-size-xs: 14px;
 
     /* heading sizes */
-    --heading-font-size-xxl: 45px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
+    --heading-font-size-xxl: 52px;
+    --heading-font-size-xl: 40px;
+    --heading-font-size-l: 30px;
+    --heading-font-size-m: 24px;
     --heading-font-size-s: 20px;
     --heading-font-size-xs: 18px;
   }
@@ -115,8 +121,8 @@ h6 {
   margin-top: 0.8em;
   margin-bottom: 0.25em;
   font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 700;
+  line-height: 1.2;
   scroll-margin: 40px;
 }
 
@@ -182,15 +188,15 @@ button {
   margin: 12px 0;
   border: 2px solid transparent;
   border-radius: 2.4em;
-  padding: 0.5em 1.2em;
+  padding: 0.5em 1.4em;
   font-family: var(--body-font-family);
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1.25;
   text-align: center;
   text-decoration: none;
-  background-color: var(--link-color);
-  color: var(--background-color);
+  background-color: var(--color-accent-red);
+  color: #fff;
   cursor: pointer;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,9 +218,15 @@ button:disabled:hover {
 
 a.button.secondary,
 button.secondary {
-  background-color: unset;
-  border: 2px solid currentcolor;
+  background-color: transparent;
+  border: 2px solid var(--color-border);
   color: var(--text-color);
+}
+
+a.button.secondary:hover,
+button.secondary:hover {
+  background-color: var(--light-color);
+  border-color: var(--dark-color);
 }
 
 main img {

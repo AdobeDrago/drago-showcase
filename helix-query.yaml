@@ -1,0 +1,38 @@
+indices:
+  projects:
+    include:
+      - /projects/**
+    target: /projects/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: |
+          attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: |
+          attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: |
+          match(attribute(el, "content"), "https:\/\/[^/]+(/.*)")
+      active:
+        select: head > meta[name="active"]
+        value: |
+          attribute(el, "content")
+      inProgress:
+        select: head > meta[name="inprogress"]
+        value: |
+          attribute(el, "content")
+      closedWin:
+        select: head > meta[name="closedwin"]
+        value: |
+          attribute(el, "content")
+      tags:
+        select: head > meta[property="article:tag"]
+        values: |
+          attribute(el, 'content')
+      lastModified:
+        select: none
+        value: |
+          parseTimestamp(headers['last-modified'], 'ddd, DD MMM YYYY hh:mm:ss GMT')

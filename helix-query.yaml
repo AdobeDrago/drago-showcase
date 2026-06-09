@@ -16,22 +16,6 @@ indices:
         select: head > meta[property="og:image"]
         value: |
           match(attribute(el, "content"), "https:\/\/[^/]+(/.*)")
-      active:
-        select: head > meta[name="active"]
-        value: |
-          attribute(el, "content")
-      inProgress:
-        select: head > meta[name="inprogress"]
-        value: |
-          attribute(el, "content")
-      closedWin:
-        select: head > meta[name="closedwin"]
-        value: |
-          attribute(el, "content")
-      tags:
-        select: head > meta[property="article:tag"]
-        values: |
-          attribute(el, 'content')
       lastModified:
         select: none
         value: |

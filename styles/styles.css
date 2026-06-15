@@ -13,7 +13,7 @@
 :root {
   /* colors */
   --background-color: #0d0d0d;
-  --light-color: #1a1a1a;
+  --light-color: #0b0b0b;
   --dark-color: #888;
   --text-color: #fff;
   --link-color: #fa0f00;
@@ -43,7 +43,7 @@
   --heading-font-size-xs: 22px;
 
   /* nav heights */
-  --nav-height: 64px;
+  --nav-height: 80px;
   --breadcrumbs-height: 34px;
   --header-height: var(--nav-height);
 }
@@ -270,7 +270,17 @@ main > .section:first-of-type {
 /* section metadata */
 main .section.light,
 main .section.highlight {
-  background-color: var(--light-color);
+  background-color: var(--background-color);
   margin: 0;
   padding: 40px 0;
+}
+
+main .section.highlight + .section {
+  margin-top: 0;
+  padding-top: 32px;
+  padding-bottom: 40px;
+}
+
+main .section.highlight:has(+ .section) {
+  padding-bottom: 0;
 }

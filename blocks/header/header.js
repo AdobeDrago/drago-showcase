@@ -197,6 +197,11 @@ export default async function decorate(block) {
     brandLink.closest('.button-container').className = '';
   }
 
+  const brandAnchor = navBrand.querySelector('a');
+  if (brandAnchor) {
+    brandAnchor.innerHTML = brandAnchor.innerHTML.replace(/Drago/g, '<span class="nav-brand-accent">Drago</span>');
+  }
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {

@@ -6,10 +6,9 @@
 
 .columns > div > div {
   padding: 24px 28px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgb(255 255 255 / 4%);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 6px;
 }
 
@@ -30,6 +29,107 @@
   color: var(--dark-color);
 }
 
+/* ── Compare variant (The shift — traditional vs PBYB) ───────── */
+
+/* Column headers — proper-case, readable size */
+.columns.compare > div > div h2,
+.columns.compare > div > div h3,
+.columns.compare > div > div h4 {
+  margin: 0 0 20px;
+  font-family: adobe-clean, adobe-clean-fallback, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--dark-color);
+}
+
+/* Right card header: red */
+.columns.compare > div > div:last-child h2,
+.columns.compare > div > div:last-child h3,
+.columns.compare > div > div:last-child h4 {
+  color: var(--color-accent-red);
+}
+
+/* Left card: faded, strikethrough list */
+.columns.compare > div > div:first-child {
+  opacity: 0.65;
+}
+
+/* Left column list — <ul><li> items get strikethrough */
+.columns.compare > div > div:first-child ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.columns.compare > div > div:first-child ul li {
+  padding: 7px 0;
+  font-size: 15px;
+  color: var(--dark-color);
+  text-decoration: line-through;
+  text-decoration-color: rgb(136 136 136 / 50%);
+}
+
+/* Right card: red left border */
+.columns.compare > div > div:last-child {
+  border-left: 3px solid var(--color-accent-red);
+}
+
+/* Right column list — <ul><li> items with red dot */
+.columns.compare > div > div:last-child ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.columns.compare > div > div:last-child ul li {
+  position: relative;
+  padding: 7px 0 7px 18px;
+  font-size: 15px;
+  color: var(--text-color);
+}
+
+.columns.compare > div > div:last-child ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-red);
+}
+
+/* Last li in right column → gold (the pipeline number) */
+.columns.compare > div > div:last-child ul li:last-child {
+  color: var(--color-accent-yellow);
+  font-weight: 600;
+}
+
+.columns.compare > div > div:last-child ul li:last-child::before {
+  background: var(--color-accent-yellow);
+}
+
+/* Arrow between cards (desktop only) */
+@media (width >= 900px) {
+  .columns.compare > div > div:last-child {
+    position: relative;
+  }
+
+  .columns.compare > div > div:last-child::before {
+    content: '→';
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--color-border);
+    pointer-events: none;
+  }
+}
+
 .columns img {
   width: 100%;
 }
@@ -44,8 +144,7 @@
 
 @media (width >= 600px) {
   .columns > div {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     gap: 16px;
   }
 

@@ -27,7 +27,7 @@
 
   /* fonts */
   --body-font-family: adobe-clean, adobe-clean-fallback, sans-serif;
-  --heading-font-family: adobe-clean-semicn, adobe-clean-semicn-fallback, sans-serif;
+  --heading-font-family: adobe-clean, adobe-clean-fallback, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -248,7 +248,8 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
+  padding: 64px 0;
 }
 
 main > .section > div {
@@ -258,7 +259,30 @@ main > .section > div {
 }
 
 main > .section:first-of-type {
-  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Gray hairline divider between every section */
+main > .section + .section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Section eyebrow labels: standalone <p> directly in the section
+   (e.g. "The shift", "How it works") — rendered outside block tables.
+   Excludes button-container so button text is never affected. */
+main > .section > div > p:not(.button-container) {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dark-color);
+}
+
+/* More breathing room between a section heading and the block below it */
+main > .section > div > h2,
+main > .section > div > h3 {
+  margin-bottom: 32px;
 }
 
 @media (width >= 900px) {
@@ -268,6 +292,34 @@ main > .section:first-of-type {
 }
 
 /* section metadata */
+
+/* cta: centered call-to-action section (no top border, generous padding) */
+main .section.cta {
+  border-top: none;
+  padding: 88px 0;
+  text-align: center;
+}
+
+main .section.cta > div > h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  color: var(--text-color);
+  margin-bottom: 32px;
+  line-height: 1.15;
+}
+
+/* tinted: full-bleed slightly darker background (manifesto section) */
+main .section.tinted {
+  background-color: #111;
+  margin: 0;
+  padding: 0;
+}
+
+main .section.tinted > div {
+  max-width: unset;
+  padding: 0;
+}
+
 main .section.light,
 main .section.highlight {
   background-color: var(--background-color);
@@ -283,4 +335,36 @@ main .section.highlight + .section {
 
 main .section.highlight:has(+ .section) {
   padding-bottom: 0;
+}
+
+/* ── Keyboard focus ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Screen-reader-only utility ──────────────────────────────── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

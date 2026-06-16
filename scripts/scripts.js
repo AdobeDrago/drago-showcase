@@ -144,8 +144,17 @@ async function loadEager(doc) {
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     doc.body.dataset.breadcrumbs = true;
   }
+
+  // Skip-to-main link — first focusable element for keyboard users
+  const skipLink = doc.createElement('a');
+  skipLink.href = '#main-content';
+  skipLink.className = 'skip-to-main';
+  skipLink.textContent = 'Skip to main content';
+  doc.body.insertBefore(skipLink, doc.body.firstChild);
+
   const main = doc.querySelector('main');
   if (main) {
+    main.id = 'main-content';
     decorateMain(main);
     doc.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);

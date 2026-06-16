@@ -4,15 +4,23 @@ export default function decorate(block) {
 
   const headerRow = rows[0];
   const dataRows = rows.slice(1);
+  const headerCells = [...headerRow.children];
 
   block.innerHTML = '';
 
-  // Column headers
+  // Column headers — aria-label pulled for screen readers on each data cell
+  const proveLabel = headerCells[0]?.textContent.trim() || 'What we prove';
+  const doLabel = headerCells[1]?.textContent.trim() || 'What we do';
+
   const header = document.createElement('div');
   header.className = 'offerings-header';
-  [...headerRow.children].forEach((cell) => {
+  header.setAttribute('role', 'row');
+  header.setAttribute('aria-label', 'Program offerings column headers');
+
+  headerCells.forEach((cell) => {
     const th = document.createElement('div');
     th.className = 'offerings-header-cell';
+    th.setAttribute('role', 'columnheader');
     th.innerHTML = cell.innerHTML;
     header.append(th);
   });
@@ -20,17 +28,20 @@ export default function decorate(block) {
   // Data rows
   const table = document.createElement('div');
   table.className = 'offerings-table';
-  table.setAttribute('role', 'list');
+  table.setAttribute('role', 'table');
+  table.setAttribute('aria-label', 'Program offerings');
 
   dataRows.forEach((row, i) => {
     const cells = [...row.children];
     const rowEl = document.createElement('div');
     rowEl.className = 'offerings-row';
-    rowEl.setAttribute('role', 'listitem');
+    rowEl.setAttribute('role', 'row');
 
     // Left cell: auto row number + content from cell 0
     const leftCell = document.createElement('div');
     leftCell.className = 'offerings-cell offerings-cell-prove';
+    leftCell.setAttribute('role', 'rowheader');
+    leftCell.setAttribute('aria-label', `${proveLabel}: ${cells[0]?.textContent.trim()}`);
 
     const num = document.createElement('span');
     num.className = 'offerings-num';
@@ -46,6 +57,7 @@ export default function decorate(block) {
     // Right cell: content from cell 1
     const rightCell = document.createElement('div');
     rightCell.className = 'offerings-cell offerings-cell-do';
+    rightCell.setAttribute('role', 'cell');
     if (cells[1]) rightCell.innerHTML = cells[1].innerHTML;
 
     rowEl.append(leftCell, rightCell);

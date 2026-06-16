@@ -183,7 +183,10 @@ a:hover {
 a.button:any-link,
 button {
   box-sizing: border-box;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* WCAG 2.5.5 touch target */
   max-width: 100%;
   margin: 12px 0;
   border: 2px solid transparent;
@@ -335,6 +338,30 @@ main .section.highlight + .section {
 
 main .section.highlight:has(+ .section) {
   padding-bottom: 0;
+}
+
+/* ── Skip to main content (keyboard accessibility) ──────────── */
+.skip-to-main {
+  position: fixed;
+  top: 0;
+  left: 16px;
+  z-index: 10000;
+  padding: 12px 20px;
+  background: var(--text-color);
+  color: var(--background-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  transform: translateY(-100%);
+  transition: transform 0.15s ease;
+}
+
+.skip-to-main:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
 }
 
 /* ── Keyboard focus ──────────────────────────────────────────── */

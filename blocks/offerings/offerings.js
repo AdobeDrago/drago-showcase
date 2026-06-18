@@ -10,7 +10,6 @@ export default function decorate(block) {
 
   // Column headers — aria-label pulled for screen readers on each data cell
   const proveLabel = headerCells[0]?.textContent.trim() || 'What we prove';
-  const doLabel = headerCells[1]?.textContent.trim() || 'What we do';
 
   const header = document.createElement('div');
   header.className = 'offerings-header';

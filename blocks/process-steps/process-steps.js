@@ -15,7 +15,9 @@ export default function decorate(block) {
   ol.className = 'process-steps-list';
   ol.setAttribute('aria-label', 'PBYB program lifecycle');
 
-  steps.forEach(({ number, title, description, outcome }) => {
+  steps.forEach(({
+    number, title, description, outcome,
+  }) => {
     const li = document.createElement('li');
     li.className = 'process-step';
 

@@ -19,7 +19,9 @@ export default function decorate(block) {
   track.className = 'process-track';
   track.setAttribute('role', 'list');
 
-  phases.forEach(({ index, number, title, duration, description }) => {
+  phases.forEach(({
+    index, number, title, duration, description,
+  }) => {
     const color = PHASE_COLORS[index] ?? 'red';
 
     const card = document.createElement('div');

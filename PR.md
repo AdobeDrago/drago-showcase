@@ -1,4 +1,4 @@
-# feat: Homepage visual overhaul — hero, nav, and stats bar
+# feat: Overview page — custom blocks, visual design, and Lighthouse compliance
 
 Fix #<gh-issue-id>
 
@@ -6,80 +6,111 @@ Fix #<gh-issue-id>
 | | URL |
 |---|---|
 | Before | https://main--drago-showcase--adobedrago.aem.page |
-| After | https://\<branch\>--drago-showcase--adobedrago.aem.page |
+| After | https://\<branch\>--drago-showcase--adobedrago.aem.page/overview |
 
 ---
 
 ## What
 
-Complete visual redesign of the drago-showcase homepage across three surface areas:
+Three areas of work shipped in this branch on top of the homepage overhaul PR:
 
-- **Hero block** — Responsive character image anchored to the right side of the hero at all screen sizes, with the yellow waistband consistently touching the hero's bottom edge. Brand name "Drago" highlighted in red in the hero headline.
-- **Navigation** — Right-justified nav links, increased height (64px → 80px), bottom border separator, larger brand wordmark, and red accent on "Drago" in the nav brand.
-- **Stats bar (columns block)** — Redesigned from a plain list into a row of KPI cards — each stat in a rounded-rectangle card with yellow numbers, grey labels, and proportionate padding.
+- **Projects listing block** — Dynamic, query-index-driven project grid with status-based tab filtering (Active / Draft / Closed / Not started), loading and empty states, and left-border color coding per status.
+- **Overview page blocks** — Three new custom blocks (`manifesto`, `process`, `offerings`) and two block variants (`columns (compare)`, `hero` without image) that implement the full seven-section overview page narrative.
+- **Global design consistency + Lighthouse compliance** — Unified Adobe Clean font across all headings, section separators, touch-target sizing, keyboard skip link, and ARIA semantics across all new blocks.
 
 ---
 
 ## Why
 
-The site launched with minimal placeholder styles. This iteration establishes the brand identity for the Drago showcase:
+The overview page follows a deliberate narrative arc — seven sections that each answer one question the reader has as they scroll. The existing boilerplate blocks couldn't express this:
 
-- The hero needed the character image visible above the dark background (a z-index stacking context issue) and correctly sized/cropped across breakpoints.
-- The nav lacked visual separation from page content and brand emphasis.
-- The stats bar had no visual hierarchy — numbers and labels rendered identically, and the section had a mismatched background color creating a visible gap between sections.
+- `manifesto` is a full-bleed, centered statement — no existing block supports full-bleed layout with an eyebrow label and a highlighted keyword.
+- `process` needs phase-specific color logic (red → gold → dimmed) that generic cards can't encode.
+- `offerings` is tabular data with auto-generated row numbers and two-column alignment — not suited to cards or columns.
+- The `columns (compare)` variant needed explicit faded/strikethrough left vs. red-dot/gold right contrast to make the "traditional sales vs. PBYB" shift visceral without labels.
+
+Lighthouse audit flagged: no skip link, buttons below 44px touch target, missing ARIA on the offerings table, and no page metadata block (noted for DA — see Anything Else).
 
 ---
 
 ## How
 
-### Hero (`blocks/hero/hero.css`, `blocks/hero/hero.js`)
+### Projects listing (`blocks/projects-listing/`)
 
-- Added `isolation: isolate` to `.hero` to create a stacking context, allowing `z-index: -1` on the `<picture>` to render above the page background but below text.
-- Used `position: absolute; bottom: 0; height: 125%; transform: translateY(20%)` on `img` to anchor the character's waistband at the hero bottom regardless of screen size. `translateY(Y%)` is always `Y%` of the element's own height — with the waistband at ~20% from the image bottom, this is mathematically stable at any viewport width.
-- Added breakpoints at 600px, 900px, 1440px, 1920px, and 2560px to progressively adjust font size, padding, and picture element left-offset as the layout widens.
-- JS injects `<span class="hero-brand-accent">` around "Drago" in the `h1` and groups multiple button containers into a flex row.
+- Fetches `/query-index.json` at runtime and maps status fields (`active`, `inProgress`, `closedWin`) to four status buckets.
+- Builds a filterable tab bar with `role="tablist"` / `role="tab"` / `aria-controls` for keyboard navigation and screen reader announcement.
+- Cards use a 3px left border color-coded by status: blue (active), yellow (draft), green (closed), gray (not started). The current page's card gets a gold "This site ✦" badge.
+- Loading state uses three CSS-animated dots; error and empty states provide actionable copy.
 
-### Navigation (`blocks/header/header.css`, `blocks/header/header.js`)
+### Manifesto block (`blocks/manifesto/`)
 
-- `flex: 0 0 auto; margin-left: auto` on `.nav-sections` at 900px+ pushes links to the right.
-- Nav height token increased to 80px; `border-bottom` separator added.
-- JS injects `<span class="nav-brand-accent">` around "Drago" in the brand anchor link.
+- JS flattens all cell content into a single `.manifesto-inner` container. An eyebrow label is detected by checking whether the first child is a `<p>` before a heading — if so, it receives `.manifesto-eyebrow`.
+- Authors bold the key word in DA (e.g. **prototype.**) — the CSS targets `.manifesto-inner h2 strong { color: var(--color-accent-red) }`.
+- Full-bleed layout is achieved via a `.section.tinted` Section Metadata class that removes `max-width` from the section wrapper and sets `background: #111`.
 
-### Stats bar (`blocks/columns/columns.css`)
+### Process block (`blocks/process/`)
 
-- Rewrote the columns layout as a flex row of equally-sized cards. DA Live renders stat numbers as `<h1>` and labels as `<h4>` — selectors target those elements specifically.
-- Numbers: `color: var(--color-accent-yellow); font-size: 38–40px; font-weight: 700`
-- Labels: `color: var(--dark-color); font-size: var(--body-font-size-s); font-weight: 400`
-- Cards: `border: 1px solid var(--color-border); border-radius: 6px; padding: 24–28px`
-- At 600px cards wrap 2-per-row; at 900px all four appear in a single row.
+- Reads five rows × four columns (number, title, duration, description) from the DA block table.
+- Applies color logic at render time: rows 0–2 → red top border + red number bubble, row 3 → gold (the money moment), row 4 → 62% opacity + gray border + "Optional" badge tab at top-right corner.
+- Horizontal flex track on desktop, vertical stack on mobile. Card padding 32px desktop, number bubble 34px diameter.
 
-### Section gap fix (`styles/styles.css`)
+### Offerings block (`blocks/offerings/`)
 
-- `main .section.highlight:has(+ .section) { padding-bottom: 0 }` removes the hero section's 40px bottom padding when directly followed by the stats section.
-- `main .section.highlight + .section { margin-top: 0; padding-top: 32px }` removes the default top margin on the stats section.
-- `highlight` sections now use `var(--background-color)` instead of `var(--light-color)` to eliminate the subtle color strip between the two sections.
+- First row treated as column headers; rows 2–N are data. Row numbers are auto-generated (`01`–`05`) in monospace and marked `aria-hidden="true"`.
+- Full ARIA table semantics on the div-based layout: `role="table"`, `role="row"`, `role="columnheader"`, `role="rowheader"`, `role="cell"`, with descriptive `aria-label` on each row header pulled from cell content.
+
+### Hero — overview variant (`blocks/hero/hero.js`, `blocks/hero/hero.css`)
+
+- `<strong>` elements in `h1` now receive `.hero-brand-accent` (red), replacing the hardcoded "Drago" regex. The old regex fires as a fallback when no `<strong>` is present (home page).
+- `<p>` immediately before `h1` → `.hero-badge` (gray pill with dot indicator). `<p>` before that → `.hero-breadcrumb` (gray link, lifts to white on hover with underline).
+- `:not(:has(picture))` widens text to 800px on desktop when no character image is present.
+- Top padding increased 16px per breakpoint to create breathing room between nav breadcrumb and headline.
+
+### Columns — compare variant (`blocks/columns/columns.css`)
+
+- `.columns.compare` targets `h2, h3, h4` (all heading levels DA may produce) for column card headers: 22px bold, proper case, gray left / red right.
+- Left card: `opacity: 0.65`, `list-style: none`, `text-decoration: line-through` on `<li>` elements.
+- Right card: `border-left: 3px solid var(--color-accent-red)`, red dot `::before` on each `<li>`, last `<li>` in gold. Desktop-only `→` arrow pseudo-element between cards.
+
+### Global design consistency (`styles/styles.css`)
+
+- `--heading-font-family` changed from `adobe-clean-semicn` to `adobe-clean` — all headings now use the same family as body text per brand requirement.
+- `main > .section` converted from margin-based to `padding: 64px 0` with `margin: 0`. `main > .section + .section` adds a `1px solid var(--color-border)` hairline between every section pair.
+- Section-level `<p>` (eyebrow labels like "The shift", "How it works") styled as 11px uppercase gray labels. Selector uses `:not(.button-container)` to prevent button text inheriting the treatment.
+- `.section.tinted` — full-bleed, `background: #111`, zero padding (block handles its own spacing).
+- `.section.cta` — centered text, `padding: 88px 0`, no top border, large `h2` via `clamp(28px, 4vw, 44px)`.
+
+### Lighthouse compliance (`styles/styles.css`, `scripts/scripts.js`)
+
+- **Skip link** — `.skip-to-main` injected as `document.body.firstChild` in `loadEager`. Visually hidden via `transform: translateY(-100%)`, slides in on `:focus`. `<main>` receives `id="main-content"` at the same point.
+- **Touch targets** — `a.button` and `button` changed from `display: inline-block` to `display: inline-flex; align-items: center; justify-content: center; min-height: 44px` (WCAG 2.5.5).
 
 ---
 
 ## Testing
 
-- [x] Mobile (375px): hero text readable, character visible, waistband at hero bottom, stats cards stack 2×2
-- [x] Tablet (768px): hero proportions correct, cards wrap cleanly
-- [x] Desktop (1280px): all four stat cards in a single row, nav links right-justified, image fills right side of hero
-- [x] Large desktop (1440px): character scales up, face and glove remain in frame, waistband still at bottom
-- [x] No visible gap or color strip between hero and stats sections at any breakpoint
-- [x] "Drago" brand accent (red) renders in both nav and hero headline
+- [x] Mobile (375px): manifesto text wraps correctly, process cards stack vertically, offerings rows single-column, compare cards full-width
+- [x] Tablet (768px): process cards 2-up, compare side by side
+- [x] Desktop (1280px): all five process phases in a horizontal row, offerings two-column, compare arrow visible between cards
+- [x] Hero (overview): badge pill gray, breadcrumb link gray at rest / white + underline on hover, "Prototype" in red
+- [x] Hero (home): "Drago" red fallback still fires, no regression
+- [x] Compare block: left column faded + strikethrough, right column red border + red dots, last item gold
+- [x] Section separators render between all sections; tinted manifesto section has no border bleed
+- [x] Skip link visible on first Tab keypress, hidden otherwise
+- [x] Buttons reach 44px minimum height at all breakpoints
+- [x] Projects listing: tab filter hides/shows cards correctly, loading dots animate, empty state visible when no matches
 
 ---
 
 ## Screenshots
 
-> Attach before/after screenshots for: mobile hero, desktop hero, stats bar, nav bar
+> Attach before/after screenshots for: overview hero, manifesto section, compare cards, process timeline, offerings table, projects listing grid with filter active
 
 ---
 
 ## Anything Else
 
-- All changes are confined to block-level CSS/JS and global `styles.css` — no changes to content, templates, or `aem.js` utilities.
-- The `translateY` approach for waistband anchoring is intentional and well-commented in `hero.css` — it is mathematically stable and does not require per-breakpoint pixel tuning.
-- If the character image changes in DA, the `translateY` percentage may need adjustment based on where the new image's waistband sits relative to its bottom edge.
+- The `manifesto`, `process`, and `offerings` blocks are authored entirely in DA block tables — no custom JavaScript is required from content authors beyond standard block naming.
+- **DA action required for full Lighthouse SEO compliance:** each page needs a **Page Metadata** block with `Title` and `Description` rows. Without it, Lighthouse SEO will flag the missing `<meta name="description">` and non-unique `<title>`.
+- The `columns (compare)` variant requires authors to use **Heading 3** (not Heading 2) for card titles in DA, and **bulleted lists** (not plain paragraphs) for comparison items. Plain paragraphs will not receive the strikethrough or red-dot treatment.
+- All block JS files are under 70 lines; no third-party dependencies introduced.

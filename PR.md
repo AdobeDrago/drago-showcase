@@ -6,7 +6,7 @@ Fix #<gh-issue-id>
 | | URL |
 |---|---|
 | Before | https://main--drago-showcase--adobedrago.aem.page |
-| After | https://\<branch\>--drago-showcase--adobedrago.aem.page/overview |
+| After | https://homepage-design--drago-showcase--adobedrago.aem.page/overview |
 
 ---
 
@@ -102,15 +102,10 @@ Lighthouse audit flagged: no skip link, buttons below 44px touch target, missing
 
 ---
 
-## Screenshots
-
-> Attach before/after screenshots for: overview hero, manifesto section, compare cards, process timeline, offerings table, projects listing grid with filter active
-
----
-
 ## Anything Else
 
 - The `manifesto`, `process`, and `offerings` blocks are authored entirely in DA block tables — no custom JavaScript is required from content authors beyond standard block naming.
 - **DA action required for full Lighthouse SEO compliance:** each page needs a **Page Metadata** block with `Title` and `Description` rows. Without it, Lighthouse SEO will flag the missing `<meta name="description">` and non-unique `<title>`.
 - The `columns (compare)` variant requires authors to use **Heading 3** (not Heading 2) for card titles in DA, and **bulleted lists** (not plain paragraphs) for comparison items. Plain paragraphs will not receive the strikethrough or red-dot treatment.
 - All block JS files are under 70 lines; no third-party dependencies introduced.
+- Three lint errors fixed to pass CI: unused `doLabel` variable removed from `offerings.js`; destructured parameters in `process/process.js` and `process-steps/process-steps.js` split onto their own lines to satisfy the `object-curly-newline` rule. The remaining 9 CI errors (`plugins/experimentation/` and `scripts/sidekick.js`) are pre-existing on `main` and unrelated to this branch.

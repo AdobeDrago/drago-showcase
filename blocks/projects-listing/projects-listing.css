@@ -41,6 +41,11 @@
   color: var(--text-color);
 }
 
+.project-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px rgb(255 255 255 / 50%);
+}
+
 .project-tab-active {
   background: rgb(255 255 255 / 10%);
   border-color: rgb(255 255 255 / 25%);

@@ -14,7 +14,7 @@
   /* colors */
   --background-color: #0d0d0d;
   --light-color: #0b0b0b;
-  --dark-color: #888;
+  --dark-color: #909090;
   --text-color: #fff;
   --link-color: #fa0f00;
   --link-hover-color: #c50c00;
@@ -233,6 +233,16 @@ a.button.secondary:hover,
 button.secondary:hover {
   background-color: var(--light-color);
   border-color: var(--dark-color);
+}
+
+a.button.secondary:focus,
+a.button.secondary:focus-visible,
+button.secondary:focus,
+button.secondary:focus-visible {
+  background-color: var(--light-color);
+  border-color: var(--dark-color);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 30%);
+  transform: none;
 }
 
 main img {

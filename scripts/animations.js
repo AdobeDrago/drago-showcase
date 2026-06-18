@@ -64,32 +64,30 @@ function setupScrollReveal() {
   const sections = [...document.querySelectorAll('main > .section')];
   const toReveal = sections.slice(1);
 
-  toReveal.forEach((s) => {
-    if (s.classList.contains('tinted')) {
-      // Full-bleed sections: animate the inner block, not the section wrapper,
-      // so the background stays visible and there's no "hole" while invisible.
-      const block = s.querySelector('.manifesto');
-      if (block) block.classList.add('section-reveal');
-    } else {
-      s.classList.add('section-reveal');
-    }
+  // For full-bleed sections (manifesto), animate the inner block directly so
+  // the background stays visible while content is hidden. For all others, the
+  // section wrapper itself is the target. Observe the same element we hide.
+  const targets = toReveal.map((s) => {
+    const inner = s.querySelector('.manifesto');
+    const target = inner ?? s;
+    target.classList.add('section-reveal');
+    return target;
   });
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const section = entry.target;
-      if (section.classList.contains('tinted')) {
-        const block = section.querySelector('.manifesto.section-reveal');
-        if (block) block.classList.add('revealed');
-      } else {
-        section.classList.add('revealed');
-      }
-      observer.unobserve(section);
-    });
-  }, { threshold: 0.07 });
+  // One rAF ensures the opacity:0 state is painted before the observer can
+  // fire for elements already near the viewport, preventing a missed transition.
+  requestAnimationFrame(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
 
-  toReveal.forEach((s) => observer.observe(s));
+    targets.forEach((el) => observer.observe(el));
+  });
 }
 
 export default function setupAnimations() {

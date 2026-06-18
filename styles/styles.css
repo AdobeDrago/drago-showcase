@@ -211,6 +211,9 @@ button:hover,
 button:focus {
   background-color: var(--link-hover-color);
   cursor: pointer;
+  box-shadow: 0 0 0 4px rgb(250 15 0 / 20%);
+  transform: translateY(-1px);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 button:disabled,
@@ -338,6 +341,18 @@ main .section.highlight + .section {
 
 main .section.highlight:has(+ .section) {
   padding-bottom: 0;
+}
+
+/* ── Scroll reveal ───────────────────────────────────────────── */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.section-reveal.revealed {
+  opacity: 1;
+  transform: none;
 }
 
 /* ── Skip to main content (keyboard accessibility) ──────────── */

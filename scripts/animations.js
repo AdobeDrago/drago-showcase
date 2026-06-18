@@ -64,14 +64,28 @@ function setupScrollReveal() {
   const sections = [...document.querySelectorAll('main > .section')];
   const toReveal = sections.slice(1);
 
-  toReveal.forEach((s) => s.classList.add('section-reveal'));
+  toReveal.forEach((s) => {
+    if (s.classList.contains('tinted')) {
+      // Full-bleed sections: animate the inner block, not the section wrapper,
+      // so the background stays visible and there's no "hole" while invisible.
+      const block = s.querySelector('.manifesto');
+      if (block) block.classList.add('section-reveal');
+    } else {
+      s.classList.add('section-reveal');
+    }
+  });
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
-        observer.unobserve(entry.target);
+      if (!entry.isIntersecting) return;
+      const section = entry.target;
+      if (section.classList.contains('tinted')) {
+        const block = section.querySelector('.manifesto.section-reveal');
+        if (block) block.classList.add('revealed');
+      } else {
+        section.classList.add('revealed');
       }
+      observer.unobserve(section);
     });
   }, { threshold: 0.07 });
 

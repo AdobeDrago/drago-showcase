@@ -13,19 +13,6 @@
   background-color: var(--background-color);
 }
 
-/* Ambient red bloom — low-opacity stage light behind the headline */
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -15%;
-  left: -8%;
-  width: 60%;
-  height: 130%;
-  background: radial-gradient(ellipse at 30% 40%, rgb(250 15 0 / 5%) 0%, transparent 65%);
-  z-index: -1;
-  pointer-events: none;
-}
-
 .hero > div > div {
   max-width: 100%;
 }
@@ -54,15 +41,6 @@
     opacity: 1;
     transform: none;
   }
-}
-
-/* badge and breadcrumb enter just before the headline */
-.hero .hero-breadcrumb {
-  animation: hero-headline-enter 0.55s ease-out both;
-}
-
-.hero .hero-badge {
-  animation: hero-headline-enter 0.55s ease-out 0.05s both;
 }
 
 .hero .hero-brand-accent {

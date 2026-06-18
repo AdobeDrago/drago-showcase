@@ -10,15 +10,17 @@ export default function decorate(block) {
       h1.innerHTML = h1.innerHTML.replace(/Drago/g, '<span class="hero-brand-accent">Drago</span>');
     }
 
-    // Badge pill: <p> immediately before the h1 → styled as a labelled pill
-    const prev = h1.previousElementSibling;
-    if (prev && prev.tagName === 'P') {
-      prev.classList.add('hero-badge');
+    // Badge + breadcrumb only on text-only heroes (overview page).
+    // Homepage hero has a picture so skip detection there.
+    if (!block.querySelector('picture')) {
+      const prev = h1.previousElementSibling;
+      if (prev && prev.tagName === 'P') {
+        prev.classList.add('hero-badge');
 
-      // Breadcrumb: <p> one step further up (authored as the first line in the hero cell)
-      const crumb = prev.previousElementSibling;
-      if (crumb && crumb.tagName === 'P') {
-        crumb.classList.add('hero-breadcrumb');
+        const crumb = prev.previousElementSibling;
+        if (crumb && crumb.tagName === 'P') {
+          crumb.classList.add('hero-breadcrumb');
+        }
       }
     }
   }

@@ -24,6 +24,7 @@ export default function decorate(block) {
     const skills = (cells[3]?.textContent.trim() || '').split(',').map((s) => s.trim()).filter(Boolean);
     const title = cells[4]?.textContent.trim() || '';
     const email = cells[5]?.textContent.trim() || '';
+    const photo = cells[6]?.querySelector('img') || null;
 
     if (!name) return;
 
@@ -49,9 +50,14 @@ export default function decorate(block) {
 
     const avatar = document.createElement('div');
     avatar.className = 'team-lead-avatar';
-    avatar.textContent = getInitials(name);
-    avatar.style.setProperty('--avatar-color', getAvatarColor(name));
     avatar.setAttribute('aria-hidden', 'true');
+    if (photo) {
+      photo.alt = '';
+      avatar.append(photo);
+    } else {
+      avatar.textContent = getInitials(name);
+      avatar.style.setProperty('--avatar-color', getAvatarColor(name));
+    }
 
     const nameGroup = document.createElement('div');
     const nameEl = document.createElement('div');

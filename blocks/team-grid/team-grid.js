@@ -20,9 +20,14 @@ function buildMemberCard(member) {
 
   const avatar = document.createElement('div');
   avatar.className = 'team-member-avatar';
-  avatar.textContent = getInitials(member.name);
-  avatar.style.setProperty('--avatar-color', getAvatarColor(member.name));
   avatar.setAttribute('aria-hidden', 'true');
+  if (member.photo) {
+    member.photo.alt = '';
+    avatar.append(member.photo);
+  } else {
+    avatar.textContent = getInitials(member.name);
+    avatar.style.setProperty('--avatar-color', getAvatarColor(member.name));
+  }
 
   const identity = document.createElement('div');
   const nameEl = document.createElement('div');
@@ -84,6 +89,7 @@ export default function decorate(block) {
       skills: (cells[3]?.textContent.trim() || '').split(',').map((s) => s.trim()).filter(Boolean),
       title: cells[4]?.textContent.trim() || '',
       email: cells[5]?.textContent.trim() || '',
+      photo: cells[6]?.querySelector('img') || null,
     };
   }).filter((m) => m.name);
 

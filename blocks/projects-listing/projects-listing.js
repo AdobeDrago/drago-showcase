@@ -89,39 +89,64 @@ function buildTabs(projects, grid) {
   tabsEl.setAttribute('role', 'tablist');
   tabsEl.setAttribute('aria-label', 'Filter projects by status');
 
-  const makeTab = (filter, label, hasDot, count) => {
+  const makeTab = (filter, label, count, isActive) => {
     const btn = document.createElement('button');
-    btn.className = `project-tab${filter === 'all' ? ' project-tab-active' : ''}`;
+    btn.className = `project-tab${isActive ? ' project-tab-active' : ''}`;
     btn.dataset.filter = filter;
     btn.setAttribute('role', 'tab');
-    btn.setAttribute('aria-selected', filter === 'all' ? 'true' : 'false');
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     btn.setAttribute('aria-controls', panelId);
     btn.type = 'button';
 
-    if (hasDot) {
+    if (filter !== 'all') {
       const dot = document.createElement('span');
       dot.className = `project-tab-dot project-tab-dot-${filter}`;
       dot.setAttribute('aria-hidden', 'true');
-      const countSpan = document.createElement('span');
-      countSpan.className = 'project-tab-count';
-      countSpan.textContent = count;
-      btn.append(dot, document.createTextNode(` ${label} `), countSpan);
-    } else {
-      btn.textContent = label;
+      btn.append(dot);
     }
+
+    const labelSpan = document.createElement('span');
+    labelSpan.textContent = label;
+    const countBadge = document.createElement('span');
+    countBadge.className = 'project-tab-count';
+    countBadge.textContent = count;
+    btn.append(labelSpan, countBadge);
 
     return btn;
   };
 
-  tabsEl.append(makeTab('all', 'All', false, null));
+  tabsEl.append(makeTab('all', 'All', projects.length, true));
   STATUS_ORDER.forEach((s) => {
     if (!counts[s]) return;
-    tabsEl.append(makeTab(s, STATUS[s].label, true, counts[s]));
+    tabsEl.append(makeTab(s, STATUS[s].label, counts[s], false));
   });
+
+  // Preview-dim: hover an inactive tab to preview which cards match
+  const clearPreview = () => {
+    grid.querySelectorAll('.project-card').forEach((card) => {
+      card.classList.remove('project-card-preview-dim');
+    });
+  };
+
+  tabsEl.addEventListener('mouseover', (e) => {
+    const tab = e.target.closest('[data-filter]');
+    if (!tab || tab.classList.contains('project-tab-active') || tab.dataset.filter === 'all') {
+      clearPreview();
+      return;
+    }
+    const { filter } = tab.dataset;
+    grid.querySelectorAll('.project-card').forEach((card) => {
+      card.classList.toggle('project-card-preview-dim', card.dataset.status !== filter);
+    });
+  });
+
+  tabsEl.addEventListener('mouseleave', clearPreview);
 
   tabsEl.addEventListener('click', (e) => {
     const tab = e.target.closest('[data-filter]');
     if (!tab) return;
+
+    clearPreview();
 
     tabsEl.querySelectorAll('.project-tab').forEach((t) => {
       t.classList.remove('project-tab-active');
@@ -132,7 +157,16 @@ function buildTabs(projects, grid) {
 
     const { filter } = tab.dataset;
     grid.querySelectorAll('.project-card').forEach((card) => {
-      card.classList.toggle('project-card-hidden', filter !== 'all' && card.dataset.status !== filter);
+      const matches = filter === 'all' || card.dataset.status === filter;
+      if (matches) {
+        card.style.display = '';
+        requestAnimationFrame(() => card.classList.remove('project-card-hidden'));
+      } else {
+        card.classList.add('project-card-hidden');
+        setTimeout(() => {
+          if (card.classList.contains('project-card-hidden')) card.style.display = 'none';
+        }, 280);
+      }
     });
 
     syncEmptyState(grid);

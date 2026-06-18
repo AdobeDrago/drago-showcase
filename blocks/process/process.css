@@ -39,6 +39,7 @@
 
 .process-card-in {
   opacity: 1;
+  transform: none;
 }
 
 @media (width >= 900px) {

@@ -7,3 +7,7 @@ helix-importer-ui
 .DS_Store
 *.bak
 .idea
+
+# Claude Code local tooling
+.claude/
+skills-lock.json

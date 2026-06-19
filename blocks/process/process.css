@@ -1,0 +1,127 @@
+/* ── Track: vertical stack → horizontal row ────────────────── */
+.process-track {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 48px;
+}
+
+@media (width >= 900px) {
+  .process-track {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+/* ── Single phase card ───────────────────────────────────────── */
+.process-card {
+  position: relative;
+  padding: 28px 24px;
+  background: #131313;
+  border: 1px solid var(--color-border);
+  border-top-width: 3px;
+  border-radius: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.process-card:not(.process-card-optional):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 45%);
+}
+
+/* Entrance stagger — JS adds these classes when track enters viewport */
+.process-card-ready {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.process-card-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (width >= 900px) {
+  .process-card {
+    flex: 1;
+    padding: 32px 28px;
+  }
+
+  /* Phase 5 (optional) takes slightly less space */
+  .process-card-optional {
+    flex: 0.85;
+    opacity: 0.62;
+  }
+}
+
+/* ── Top-border color by phase ───────────────────────────────── */
+.process-card-red    { border-top-color: var(--color-accent-red); }
+.process-card-gold   { border-top-color: var(--color-accent-yellow); }
+.process-card-optional { border-top-color: var(--color-border); }
+
+/* ── Phase number bubble ─────────────────────────────────────── */
+.process-card-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.process-card-red    .process-card-num { background: var(--color-accent-red); }
+.process-card-gold   .process-card-num { background: var(--color-accent-yellow); color: #000; }
+.process-card-optional .process-card-num { background: var(--color-border); color: var(--dark-color); }
+
+/* ── Title ───────────────────────────────────────────────────── */
+.process-card-title {
+  margin: 0 0 8px;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-color);
+}
+
+/* ── Duration in gold ────────────────────────────────────────── */
+.process-card-duration {
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-accent-yellow);
+}
+
+.process-card-optional .process-card-duration {
+  color: var(--dark-color);
+}
+
+/* ── Description ─────────────────────────────────────────────── */
+.process-card-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--dark-color);
+}
+
+/* ── Optional badge (top-right corner) ──────────────────────── */
+.process-card-opt-badge {
+  position: absolute;
+  top: -1px;
+  right: 12px;
+  padding: 2px 8px;
+  background: #1c1c1c;
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dark-color);
+}

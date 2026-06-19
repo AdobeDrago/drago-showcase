@@ -124,6 +124,8 @@ function decorateSections(main) {
  * Decorates the main element.
  * @param {Element} main The main element
  */
+export const NX_ORIGIN = 'https://da.live';
+
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
@@ -144,8 +146,17 @@ async function loadEager(doc) {
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     doc.body.dataset.breadcrumbs = true;
   }
+
+  // Skip-to-main link — first focusable element for keyboard users
+  const skipLink = doc.createElement('a');
+  skipLink.href = '#main-content';
+  skipLink.className = 'skip-to-main';
+  skipLink.textContent = 'Skip to main content';
+  doc.body.insertBefore(skipLink, doc.body.firstChild);
+
   const main = doc.querySelector('main');
   if (main) {
+    main.id = 'main-content';
     decorateMain(main);
     doc.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);
@@ -172,6 +183,9 @@ async function loadLazy(doc) {
 
   const main = doc.querySelector('main');
   await loadSections(main);
+
+  const { default: setupAnimations } = await import('./site-animations.js');
+  setupAnimations();
 
   const { hash } = window.location;
   const element = hash ? doc.getElementById(hash.substring(1)) : false;

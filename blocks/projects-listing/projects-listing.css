@@ -14,53 +14,72 @@
 .project-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0;
+  gap: 8px;
   margin-bottom: 28px;
-  border-bottom: 1px solid var(--color-border);
 }
 
 .project-tab {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  margin-bottom: -1px;
+  gap: 8px;
+  padding: 7px 14px;
+  min-height: 44px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 100px;
   color: var(--dark-color);
   font-family: var(--body-font-family);
-  font-size: var(--body-font-size-xs);
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.15s;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.project-tab:hover {
+.project-tab:hover:not(.project-tab-active) {
+  border-color: rgb(255 255 255 / 22%);
   color: var(--text-color);
 }
 
-.project-tab--active {
+.project-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px rgb(255 255 255 / 50%);
+}
+
+.project-tab-active {
+  background: rgb(255 255 255 / 10%);
+  border-color: rgb(255 255 255 / 25%);
   color: var(--text-color);
-  border-bottom-color: var(--text-color);
+  font-weight: 600;
 }
 
 .project-tab-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.project-tab-dot--active      { background-color: var(--color-accent-blue); }
-.project-tab-dot--draft       { background-color: var(--color-accent-yellow); }
-.project-tab-dot--closed      { background-color: #22c55e; }
-.project-tab-dot--not-started { background-color: var(--dark-color); }
+.project-tab-dot-active      { background-color: var(--color-accent-blue); }
+.project-tab-dot-draft        { background-color: var(--color-accent-yellow); }
+.project-tab-dot-closed       { background-color: #22c55e; }
+.project-tab-dot-not-started  { background-color: var(--dark-color); }
 
 .project-tab-count {
-  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 5px;
+  background: rgb(255 255 255 / 8%);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.project-tab-active .project-tab-count {
+  background: rgb(255 255 255 / 16%);
 }
 
 /* ── Grid ────────────────────────────────────────────────────── */
@@ -93,22 +112,25 @@
   background-color: #131313;
   text-decoration: none;
   color: var(--text-color);
-  transition: background-color 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.15s ease, opacity 0.28s ease;
   min-height: 180px;
 }
 
 .project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 45%);
   background-color: #1c1c1c;
   text-decoration: none;
 }
 
-.project-card--hidden { display: none; }
-
-.project-card--active      { border-left-color: var(--color-accent-blue); }
-.project-card--draft       { border-left-color: var(--color-accent-yellow); }
-.project-card--closed      { border-left-color: #22c55e; }
-.project-card--not-started { border-left-color: var(--color-border); }
-.project-card--current     { border-left-color: var(--color-accent-yellow); }
+/* Fade out — JS sets display:none after 280ms transition completes */
+.project-card-hidden      { opacity: 0; pointer-events: none; }
+.project-card-preview-dim { opacity: 0.22; }
+.project-card-active      { border-left-color: var(--color-accent-blue); }
+.project-card-draft       { border-left-color: var(--color-accent-yellow); }
+.project-card-closed      { border-left-color: #22c55e; }
+.project-card-not-started { border-left-color: var(--color-border); }
+.project-card-current     { border-left-color: var(--color-accent-yellow); }
 
 .project-card-num {
   display: block;
@@ -157,11 +179,30 @@
   white-space: nowrap;
 }
 
-.project-card-badge--active      { background: rgba(77, 158, 255, 0.15); color: var(--color-accent-blue); }
-.project-card-badge--draft       { background: rgba(255, 185, 0, 0.15);  color: var(--color-accent-yellow); }
-.project-card-badge--closed      { background: rgba(34, 197, 94, 0.15);  color: #22c55e; }
-.project-card-badge--not-started { background: rgba(136, 136, 136, 0.1); color: var(--dark-color); }
-.project-card-badge--current     { background: rgba(255, 185, 0, 0.2);   color: var(--color-accent-yellow); }
+.project-card-badge-active {
+  background: rgb(77 158 255 / 15%);
+  color: var(--color-accent-blue);
+}
+
+.project-card-badge-draft {
+  background: rgb(255 185 0 / 15%);
+  color: var(--color-accent-yellow);
+}
+
+.project-card-badge-closed {
+  background: rgb(34 197 94 / 15%);
+  color: #22c55e;
+}
+
+.project-card-badge-not-started {
+  background: rgb(136 136 136 / 10%);
+  color: var(--dark-color);
+}
+
+.project-card-badge-current {
+  background: rgb(255 185 0 / 20%);
+  color: var(--color-accent-yellow);
+}
 
 .project-card-arrow {
   font-size: 15px;
@@ -173,4 +214,71 @@
 .project-card:hover .project-card-arrow {
   transform: translateX(4px);
   color: var(--text-color);
+}
+
+/* ── Loading state ───────────────────────────────────────────── */
+.projects-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 220px;
+}
+
+.projects-loading-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.projects-loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-border);
+  animation: projects-pulse 1.2s ease-in-out infinite;
+}
+
+.projects-loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.projects-loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes projects-pulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Error state ─────────────────────────────────────────────── */
+.projects-error {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-accent-red);
+  font-size: var(--body-font-size-xs);
+}
+
+/* ── Empty state ─────────────────────────────────────────────── */
+.projects-empty {
+  grid-column: 1 / -1;
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--dark-color);
+  font-size: var(--body-font-size-xs);
+}
+
+/* ── Grid panel focus ────────────────────────────────────────── */
+.projects-grid:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 4px;
+  border-radius: 4px;
 }

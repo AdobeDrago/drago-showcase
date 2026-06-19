@@ -14,7 +14,7 @@
   /* colors */
   --background-color: #0d0d0d;
   --light-color: #0b0b0b;
-  --dark-color: #888;
+  --dark-color: #909090;
   --text-color: #fff;
   --link-color: #fa0f00;
   --link-hover-color: #c50c00;
@@ -27,7 +27,7 @@
 
   /* fonts */
   --body-font-family: adobe-clean, adobe-clean-fallback, sans-serif;
-  --heading-font-family: adobe-clean-semicn, adobe-clean-semicn-fallback, sans-serif;
+  --heading-font-family: adobe-clean, adobe-clean-fallback, sans-serif;
 
   /* body sizes */
   --body-font-size-m: 22px;
@@ -183,7 +183,10 @@ a:hover {
 a.button:any-link,
 button {
   box-sizing: border-box;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* WCAG 2.5.5 touch target */
   max-width: 100%;
   margin: 12px 0;
   border: 2px solid transparent;
@@ -208,6 +211,9 @@ button:hover,
 button:focus {
   background-color: var(--link-hover-color);
   cursor: pointer;
+  box-shadow: 0 0 0 4px rgb(250 15 0 / 20%);
+  transform: translateY(-1px);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 button:disabled,
@@ -229,6 +235,16 @@ button.secondary:hover {
   border-color: var(--dark-color);
 }
 
+a.button.secondary:focus,
+a.button.secondary:focus-visible,
+button.secondary:focus,
+button.secondary:focus-visible {
+  background-color: var(--light-color);
+  border-color: var(--dark-color);
+  box-shadow: 0 0 0 3px rgb(255 255 255 / 30%);
+  transform: none;
+}
+
 main img {
   max-width: 100%;
   width: auto;
@@ -248,7 +264,8 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 0;
+  padding: 64px 0;
 }
 
 main > .section > div {
@@ -258,7 +275,30 @@ main > .section > div {
 }
 
 main > .section:first-of-type {
-  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Gray hairline divider between every section */
+main > .section + .section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Section eyebrow labels: standalone <p> directly in the section
+   (e.g. "The shift", "How it works") — rendered outside block tables.
+   Excludes button-container so button text is never affected. */
+main > .section > div > p:not(.button-container) {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dark-color);
+}
+
+/* More breathing room between a section heading and the block below it */
+main > .section > div > h2,
+main > .section > div > h3 {
+  margin-bottom: 32px;
 }
 
 @media (width >= 900px) {
@@ -268,6 +308,34 @@ main > .section:first-of-type {
 }
 
 /* section metadata */
+
+/* cta: centered call-to-action section (no top border, generous padding) */
+main .section.cta {
+  border-top: none;
+  padding: 88px 0;
+  text-align: center;
+}
+
+main .section.cta > div > h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  color: var(--text-color);
+  margin-bottom: 32px;
+  line-height: 1.15;
+}
+
+/* tinted: full-bleed slightly darker background (manifesto section) */
+main .section.tinted {
+  background-color: #111;
+  margin: 0;
+  padding: 0;
+}
+
+main .section.tinted > div {
+  max-width: unset;
+  padding: 0;
+}
+
 main .section.light,
 main .section.highlight {
   background-color: var(--background-color);
@@ -283,4 +351,72 @@ main .section.highlight + .section {
 
 main .section.highlight:has(+ .section) {
   padding-bottom: 0;
+}
+
+/* ── Scroll reveal ───────────────────────────────────────────── */
+.section-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.section-reveal.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Skip to main content (keyboard accessibility) ──────────── */
+.skip-to-main {
+  position: fixed;
+  top: 0;
+  left: 16px;
+  z-index: 10000;
+  padding: 12px 20px;
+  background: var(--text-color);
+  color: var(--background-color);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 0 0 6px 6px;
+  text-decoration: none;
+  transform: translateY(-100%);
+  transition: transform 0.15s ease;
+}
+
+.skip-to-main:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+}
+
+/* ── Keyboard focus ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Screen-reader-only utility ──────────────────────────────── */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

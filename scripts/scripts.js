@@ -182,7 +182,7 @@ async function loadLazy(doc) {
   const main = doc.querySelector('main');
   await loadSections(main);
 
-  const { default: setupAnimations } = await import('./animations.js');
+  const { default: setupAnimations } = await import('./site-animations.js');
   setupAnimations();
 
   const { hash } = window.location;

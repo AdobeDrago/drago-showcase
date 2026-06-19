@@ -96,3 +96,4 @@ export default function setupAnimations() {
   setupCounters();
   setupProcessStagger();
 }
+

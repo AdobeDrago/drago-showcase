@@ -65,3 +65,4 @@ export default function decorate(block) {
 
   block.append(header, table);
 }
+

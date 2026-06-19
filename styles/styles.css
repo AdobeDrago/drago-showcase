@@ -420,4 +420,3 @@ main .section.highlight:has(+ .section) {
     scroll-behavior: auto !important;
   }
 }
-

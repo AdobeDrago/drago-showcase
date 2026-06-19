@@ -36,4 +36,3 @@ export default function decorate(block) {
     buttonContainers.forEach((bc) => heroButtons.append(bc));
   }
 }
-

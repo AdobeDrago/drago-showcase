@@ -1,4 +1,6 @@
 export default function decorate(block) {
+  console.log("test: ");
+  
   const h1 = block.querySelector('h1');
   if (h1) {
     // <strong> in h1 (bolded in DA) → red accent. Covers both home and overview pages.

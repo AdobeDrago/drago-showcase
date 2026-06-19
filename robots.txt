@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://main--drago-showcase--pshanbhag.aem.live/sitemap.xml

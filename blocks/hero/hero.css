@@ -1,5 +1,9 @@
+.section.hero-container {
+  padding-bottom: 0;
+}
+
 .hero-container .hero-wrapper {
-  max-width: unset;
+  max-width: 1600px;
   padding: 0;
 }
 
@@ -8,7 +12,6 @@
   position: relative;
   isolation: isolate;
   padding: 72px 24px 56px;
-  border-bottom: 1px solid var(--color-border);
   overflow: hidden;
   background-color: var(--background-color);
 }
@@ -47,13 +50,6 @@
   color: var(--color-accent-red);
 }
 
-.hero picture {
-  position: absolute;
-  inset: 0 0 0 35%;
-  z-index: -1;
-  display: block;
-}
-
 /* height% is relative to picture element (= hero height H).
    translateY(20%) = 20% of img's own height, pushing it down so the
    waistband (assumed ~20% from image bottom) lands exactly at hero bottom.
@@ -88,7 +84,7 @@
 /* ── Description paragraph ───────────────────────────────────── */
 .hero > div > div > p:not(.hero-badge):not(.hero-breadcrumb) {
   color: var(--dark-color);
-  font-size: var(--body-font-size-s);
+  font-size: var(--body-font-size-m);
   line-height: 1.6;
   margin-top: 16px;
   margin-bottom: 0;
@@ -192,10 +188,6 @@
   .hero > div > div {
     max-width: 560px;
   }
-
-  .hero picture {
-    left: 42%;
-  }
 }
 
 /* ── Large desktop (1440px) ──────────────────────────────────── */
@@ -205,7 +197,7 @@
   }
 
   .hero > div > div {
-    max-width: 600px;
+    max-width: 650px;
   }
 
   .hero h1 {
@@ -241,10 +233,6 @@
     font-size: 72px;
   }
 
-  .hero picture {
-    right: 28%;
-  }
-
 }
 
 /* ── Super-ultrawide (2560px+) ───────────────────────────────── */
@@ -252,10 +240,15 @@
   .hero h1 {
     font-size: 80px;
   }
-
-  .hero picture {
-    right: 28%;
-  }
   
 }
 
+
+/******* hero variations ********/
+.hero.center {
+  text-align: center;
+}
+
+.hero.center > div > div {
+  margin: 0 auto;
+}

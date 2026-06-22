@@ -278,11 +278,6 @@ main > .section:first-of-type {
   padding-top: 0;
 }
 
-/* Gray hairline divider between every section */
-main > .section + .section {
-  border-top: 1px solid var(--color-border);
-}
-
 /* Section eyebrow labels: standalone <p> directly in the section
    (e.g. "The shift", "How it works") — rendered outside block tables.
    Excludes button-container so button text is never affected. */

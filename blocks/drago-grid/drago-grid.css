@@ -115,8 +115,8 @@
 
 .team-member-avatar {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   overflow: hidden;
   background: var(--avatar-color, var(--dark-color));
@@ -137,14 +137,14 @@
 }
 
 .team-member-name {
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-color);
   line-height: 1.2;
 }
 
 .team-member-handle {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--dark-color);
   margin-top: 2px;
 }
@@ -161,7 +161,7 @@
   background: rgb(255 255 255 / 4%);
   border: 1px solid rgb(255 255 255 / 8%);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--dark-color);
 }
@@ -177,7 +177,7 @@
 }
 
 .team-member-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-color);
   line-height: 1.35;
@@ -187,8 +187,8 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
-  color: var(--dark-color);
+  font-size: 14px;
+  color: var(--dark-color) !important;
   text-decoration: none;
   word-break: break-all;
 }

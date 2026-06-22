@@ -20,7 +20,7 @@
   padding: 24px;
   background: #131313;
   border: 1px solid var(--color-border);
-  border-left: 3px solid var(--color-accent-red);
+  border-left: 5px solid var(--color-accent-red);
   border-radius: 8px;
   /* Emanating red glow from left border */
   box-shadow:
@@ -89,8 +89,8 @@
 
 .team-lead-avatar {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 75px;
+  height: 75px;
   border-radius: 50%;
   overflow: hidden;
   background: var(--avatar-color, var(--color-accent-red));
@@ -115,7 +115,7 @@
 }
 
 .team-lead-name {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-color);
   line-height: 1.2;

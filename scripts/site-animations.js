@@ -5,6 +5,8 @@ function animateCounter(el) {
 
   const prefix = raw.match(/^[^0-9]*/)?.[0] || '';
   const suffix = raw.match(/[^0-9.]*$/)?.[0] || '';
+  const core = raw.slice(prefix.length, raw.length - suffix.length);
+  if (/[^0-9.]/.test(core)) return;
   const isDecimal = raw.includes('.');
   const duration = 1400;
   const startTime = performance.now();

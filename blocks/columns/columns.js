@@ -1,3 +1,20 @@
+function wireProjectsCount(block) {
+  const labels = [...block.querySelectorAll('h4')];
+  const projectsLabel = labels.find((h) => h.textContent.trim().toLowerCase() === 'projects');
+  if (!projectsLabel) return;
+
+  const statEl = projectsLabel.closest('div')?.querySelector('h1, h2, h3');
+  if (!statEl) return;
+
+  const update = (count) => { statEl.textContent = count; };
+
+  if (window.__projectsCount != null) {
+    update(window.__projectsCount);
+  } else {
+    document.addEventListener('projects:loaded', (e) => update(e.detail.count), { once: true });
+  }
+}
+
 export default function decorate(block) {
   const cols = [...block.firstElementChild.children];
   block.classList.add(`columns-${cols.length}-cols`);
@@ -15,4 +32,6 @@ export default function decorate(block) {
       }
     });
   });
+
+  wireProjectsCount(block);
 }

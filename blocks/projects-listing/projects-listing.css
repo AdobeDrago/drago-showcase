@@ -216,6 +216,50 @@
   color: var(--text-color);
 }
 
+/* ── Show more button ────────────────────────────────────────── */
+.projects-show-more[hidden] { display: none !important; }
+
+.projects-show-more,
+.projects-show-more:hover,
+.projects-show-more:focus,
+.projects-show-more:focus-visible,
+.projects-show-more:active {
+  /* reset every state the global button rule touches */
+  background-color: transparent;
+  box-shadow: none;
+  transform: none;
+  border-radius: 8px;
+  color: var(--dark-color);
+  -webkit-text-fill-color: var(--dark-color);
+}
+
+.projects-show-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  padding: 13px 24px;
+  border: 1px solid var(--color-border);
+  font-family: var(--body-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.projects-show-more:hover {
+  background-color: rgb(255 255 255 / 4%);
+  border-color: rgb(255 255 255 / 18%);
+  color: var(--text-color);
+  -webkit-text-fill-color: var(--text-color);
+}
+
+.projects-show-more:focus-visible {
+  box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px rgb(255 255 255 / 40%) !important;
+}
+
 /* ── Loading state ───────────────────────────────────────────── */
 .projects-loading {
   display: flex;

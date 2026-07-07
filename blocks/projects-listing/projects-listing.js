@@ -2,10 +2,11 @@ const STATUS = {
   active: { label: 'Active' },
   draft: { label: 'Draft' },
   closed: { label: 'Closed Win' },
-  'not-started': { label: 'Not started' },
+  'not-started': { label: 'Hold' },
 };
 
 const STATUS_ORDER = ['active', 'draft', 'closed', 'not-started'];
+const PAGE_SIZE = 9;
 
 function getStatus(project) {
   if (project.active === 'true') return 'active';
@@ -58,8 +59,42 @@ function buildCard(project, index) {
   return card;
 }
 
-function syncEmptyState(grid) {
-  const visible = grid.querySelectorAll('.project-card:not(.project-card-hidden)').length;
+// Returns cards that match the current filter, in DOM order.
+function getFilterMatches(grid, filter) {
+  return [...grid.querySelectorAll('.project-card')].filter(
+    (c) => filter === 'all' || c.dataset.status === filter,
+  );
+}
+
+// Recalculates overflow display and updates the show-more button.
+// Uses the filter value directly so it's never confused by in-flight
+// class/display changes from ongoing filter animations.
+function syncOverflow(grid, btn, filter) {
+  const isExpanded = grid.classList.contains('projects-grid-expanded');
+  const matching = getFilterMatches(grid, filter);
+
+  matching.forEach((card, i) => {
+    if (i >= PAGE_SIZE && !isExpanded) {
+      card.style.display = 'none';
+    } else if (!card.classList.contains('project-card-hidden')) {
+      card.style.display = '';
+    }
+  });
+
+  const overflowCount = Math.max(0, matching.length - PAGE_SIZE);
+  if (overflowCount > 0) {
+    btn.hidden = false;
+    btn.textContent = isExpanded ? 'Show less' : `Show ${overflowCount} more`;
+  } else {
+    btn.hidden = true;
+    grid.classList.remove('projects-grid-expanded');
+  }
+}
+
+// Determines empty state from the filter value, not from DOM classes,
+// so it's correct even before filter-change animations settle.
+function syncEmptyState(grid, filter) {
+  const matchCount = getFilterMatches(grid, filter).length;
   let empty = grid.querySelector('.projects-empty');
   if (!empty) {
     empty = document.createElement('p');
@@ -69,10 +104,28 @@ function syncEmptyState(grid) {
     empty.textContent = 'No projects match this filter.';
     grid.append(empty);
   }
-  empty.hidden = visible > 0;
+  empty.hidden = matchCount > 0;
 }
 
-function buildTabs(projects, grid) {
+function buildShowMore(grid, getFilter) {
+  const btn = document.createElement('button');
+  btn.className = 'projects-show-more';
+  btn.type = 'button';
+  btn.hidden = true;
+
+  btn.addEventListener('click', () => {
+    const collapsing = grid.classList.contains('projects-grid-expanded');
+    grid.classList.toggle('projects-grid-expanded');
+    syncOverflow(grid, btn, getFilter());
+    if (collapsing) {
+      grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+
+  return btn;
+}
+
+function buildTabs(projects, grid, showMoreBtn, getFilter, setFilter) {
   const counts = {};
   projects.forEach((p) => {
     const s = getStatus(p);
@@ -155,7 +208,11 @@ function buildTabs(projects, grid) {
     tab.classList.add('project-tab-active');
     tab.setAttribute('aria-selected', 'true');
 
+    grid.classList.remove('projects-grid-expanded');
+
     const { filter } = tab.dataset;
+    setFilter(filter);
+
     grid.querySelectorAll('.project-card').forEach((card) => {
       const matches = filter === 'all' || card.dataset.status === filter;
       if (matches) {
@@ -169,7 +226,9 @@ function buildTabs(projects, grid) {
       }
     });
 
-    syncEmptyState(grid);
+    // Both calls use the new filter value directly — no timing dependency on DOM state
+    syncOverflow(grid, showMoreBtn, filter);
+    syncEmptyState(grid, filter);
   });
 
   return tabsEl;
@@ -201,22 +260,32 @@ export default async function decorate(block) {
     .filter((p) => p.title)
     .sort((a, b) => STATUS_ORDER.indexOf(getStatus(a)) - STATUS_ORDER.indexOf(getStatus(b)));
 
+  window.__projectsCount = projects.length;
+  document.dispatchEvent(new CustomEvent('projects:loaded', { detail: { count: projects.length } }));
+
   block.textContent = '';
 
   const header = document.createElement('div');
   header.className = 'projects-header';
-
   const countEl = document.createElement('span');
   countEl.className = 'projects-count';
   countEl.textContent = `${projects.length} project${projects.length !== 1 ? 's' : ''}`;
-
   header.append(countEl);
 
   const grid = document.createElement('div');
   grid.className = 'projects-grid';
   projects.forEach((p, i) => grid.append(buildCard(p, i)));
 
-  const tabs = buildTabs(projects, grid);
+  // activeFilter is the single source of truth for both overflow and empty-state
+  let activeFilter = 'all';
+  const getFilter = () => activeFilter;
+  const setFilter = (f) => { activeFilter = f; };
 
-  block.append(header, tabs, grid);
+  const showMoreBtn = buildShowMore(grid, getFilter);
+  const tabs = buildTabs(projects, grid, showMoreBtn, getFilter, setFilter);
+
+  block.append(header, tabs, grid, showMoreBtn);
+
+  syncOverflow(grid, showMoreBtn, activeFilter);
+  syncEmptyState(grid, activeFilter);
 }

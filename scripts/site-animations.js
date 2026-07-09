@@ -24,7 +24,10 @@ function animateCounter(el) {
 }
 
 function setupCounters() {
-  const counters = [...document.querySelectorAll('.columns:not(.compare) > div > div h1')];
+  const counters = [
+    ...document.querySelectorAll('.columns:not(.compare) > div > div h1'),
+    ...document.querySelectorAll('.project-metrics-value, .project-metrics-chip-value'),
+  ];
   if (!counters.length) return;
 
   const observer = new IntersectionObserver((entries) => {
@@ -76,20 +79,22 @@ function setupScrollReveal() {
     return target;
   });
 
-  // One rAF ensures the opacity:0 state is painted before the observer can
-  // fire for elements already near the viewport, preventing a missed transition.
-  requestAnimationFrame(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
+  // Force a synchronous reflow on each target so opacity:0 is committed to the
+  // render tree before IntersectionObserver fires for already-visible elements.
+  // Without this, async IO callbacks can fire before the first paint, causing
+  // both classes to land in the same frame and the transition to be skipped.
+  targets.forEach((el) => el.getBoundingClientRect());
 
-    targets.forEach((el) => observer.observe(el));
-  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  targets.forEach((el) => observer.observe(el));
 }
 
 export default function setupAnimations() {

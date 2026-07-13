@@ -1,6 +1,4 @@
 export default function decorate(block) {
-  console.log("test: ");
-  
   const h1 = block.querySelector('h1');
   if (h1) {
     // <strong> in h1 (bolded in DA) → red accent. Covers both home and overview pages.
@@ -9,7 +7,25 @@ export default function decorate(block) {
       strongs.forEach((s) => s.classList.add('hero-brand-accent'));
     } else {
       // Fallback for home page where "Drago" is not explicitly bolded
-      h1.innerHTML = h1.innerHTML.replace(/Drago/g, '<span class="hero-brand-accent">Drago</span>');
+      const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
+      const textNodes = [];
+      let node;
+      // eslint-disable-next-line no-cond-assign
+      while ((node = walker.nextNode())) textNodes.push(node);
+      textNodes.forEach((tn) => {
+        if (!tn.textContent.includes('Drago')) return;
+        const frag = document.createDocumentFragment();
+        tn.textContent.split('Drago').forEach((part, i, arr) => {
+          if (part) frag.append(document.createTextNode(part));
+          if (i < arr.length - 1) {
+            const accent = document.createElement('span');
+            accent.className = 'hero-brand-accent';
+            accent.textContent = 'Drago';
+            frag.append(accent);
+          }
+        });
+        tn.replaceWith(frag);
+      });
     }
 
     // Badge + breadcrumb only on text-only heroes (overview page).

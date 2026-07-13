@@ -139,6 +139,318 @@
   }
 }
 
+/* ── Scope variant (project page technical specs) ────────────── */
+.columns.scope > div > div:last-child {
+  background: transparent;
+  border-color: var(--color-border);
+}
+
+/* Left column: narrative + deliverables */
+.columns-scope-narrative {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-color);
+  margin: 0 0 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.columns-scope-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.columns-scope-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--dark-color);
+}
+
+.columns-scope-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-accent-red);
+  flex-shrink: 0;
+}
+
+.columns-scope-heading {
+  margin: 0 0 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dark-color);
+}
+
+.columns-scope-dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 14px;
+  column-gap: 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.columns-scope-dl dt {
+  font-size: 14px;
+  color: var(--dark-color);
+  align-self: baseline;
+}
+
+.columns-scope-dl dd {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: right;
+  margin: 0;
+  align-self: baseline;
+}
+
+/* ── Project hero variant ────────────────────────────────────── */
+
+/* Section spacing */
+main > .section:has(.columns.project-hero) {
+  padding-top: 56px;
+  padding-bottom: 40px;
+}
+
+main > .section:has(.columns.project-hero) + .section {
+  padding-top: 32px;
+}
+
+/* Reset default card treatment on the body/cells */
+.columns.project-hero > .hero-project-body {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  border-radius: 0;
+}
+
+.columns.project-hero > .hero-project-body:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.columns.project-hero .hero-project-left,
+.columns.project-hero .hero-project-right {
+  padding: 0;
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  border-radius: 0;
+}
+
+.columns.project-hero .hero-project-left:hover,
+.columns.project-hero .hero-project-right:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.columns.project-hero .hero-project-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.columns.project-hero .hero-project-right {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: flex-start;
+}
+
+@media (width >= 768px) {
+  .columns.project-hero > .hero-project-body {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 48px;
+  }
+}
+
+/* ── Entrance animations ─────────────────────────────────────── */
+@keyframes project-hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.columns.project-hero .hero-project-badges {
+  animation: project-hero-enter 0.55s ease-out both;
+  animation-delay: 0ms;
+}
+
+.columns.project-hero .hero-project-title {
+  animation: project-hero-enter 0.65s ease-out both;
+  animation-delay: 80ms;
+}
+
+.columns.project-hero .hero-project-tags {
+  animation: project-hero-enter 0.55s ease-out both;
+  animation-delay: 160ms;
+}
+
+.columns.project-hero .hero-project-desc {
+  animation: project-hero-enter 0.55s ease-out both;
+  animation-delay: 230ms;
+}
+
+.columns.project-hero .hero-project-right {
+  animation: project-hero-enter 0.65s ease-out both;
+  animation-delay: 120ms;
+}
+
+/* ── hero-project-* element styles (self-contained here) ─────── */
+.hero-project-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-project-right {
+  margin-left: auto;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+/* Badges */
+.hero-project-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.hero-project-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.hero-project-badge-active {
+  background: rgb(77 158 255 / 15%);
+  color: var(--color-accent-blue);
+}
+
+.hero-project-badge-draft {
+  background: rgb(255 185 0 / 15%);
+  color: var(--color-accent-yellow);
+}
+
+.hero-project-badge-closed {
+  background: rgb(34 197 94 / 15%);
+  color: #22c55e;
+}
+
+.hero-project-badge-hold {
+  background: rgb(136 136 136 / 10%);
+  color: var(--dark-color);
+}
+
+.hero-project-badge-deal {
+  background: rgb(255 185 0 / 10%);
+  border-color: rgb(255 185 0 / 30%);
+  color: var(--color-accent-yellow);
+}
+
+.hero-project-badge-outlined {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--dark-color);
+}
+
+/* Title */
+.hero-project-title {
+  margin: 0 0 16px;
+  font-family: adobe-clean, adobe-clean-fallback, sans-serif;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--text-color);
+}
+
+/* Tags */
+.hero-project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.hero-project-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgb(255 255 255 / 5%);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--dark-color);
+}
+
+/* Description */
+.hero-project-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--dark-color);
+  max-width: 560px;
+}
+
+/* Logo */
+.hero-project-logo {
+  width: 360px;
+  height: 180px;
+  padding: 20px 28px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-project-logo picture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.columns.project-hero .hero-project-logo img,
+.columns.project-hero .hero-project-logo picture img {
+  position: static;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
+
 .columns img {
   width: 100%;
 }

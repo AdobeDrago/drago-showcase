@@ -1,8 +1,8 @@
 const STATUS = {
   active: { label: 'Active' },
-  draft: { label: 'Draft' },
+  draft: { label: 'Prototype Build' },
   closed: { label: 'Closed Win' },
-  'not-started': { label: 'Hold' },
+  'not-started': { label: 'On Hold' },
 };
 
 const STATUS_ORDER = ['active', 'draft', 'closed', 'not-started'];
@@ -234,6 +234,129 @@ function buildTabs(projects, grid, showMoreBtn, getFilter, setFilter) {
   return tabsEl;
 }
 
+// ── Industry-grouped variant ──────────────────────────────────────
+
+function buildIndustryCard(project) {
+  const status = getStatus(project);
+  const { label } = STATUS[status];
+
+  const card = document.createElement('a');
+  card.className = 'ipl-card';
+  card.href = project.path;
+  card.setAttribute('aria-label', `${project.title}, ${label}`);
+
+  const logoWrap = document.createElement('div');
+  logoWrap.className = 'ipl-card-logo';
+
+  // Strip CDN optimization params to preserve PNG transparency
+  const logoSrc = (project.image || '').split('?')[0];
+  if (logoSrc) {
+    const img = document.createElement('img');
+    img.src = logoSrc;
+    img.alt = `${project.title} logo`;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    logoWrap.append(img);
+  } else {
+    const fallback = document.createElement('span');
+    fallback.className = 'ipl-card-logo-fallback';
+    fallback.textContent = project.title;
+    logoWrap.append(fallback);
+  }
+
+  const statusRow = document.createElement('div');
+  statusRow.className = 'ipl-card-status';
+
+  const dot = document.createElement('span');
+  dot.className = `ipl-card-dot ipl-card-dot-${status}`;
+  dot.setAttribute('aria-hidden', 'true');
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'ipl-card-label';
+  labelEl.textContent = label;
+
+  statusRow.append(dot, labelEl);
+  card.append(logoWrap, statusRow);
+  return card;
+}
+
+function buildIndustryGrouped(block, projects) {
+  // Group by industry metadata field, fall back to 'Other'
+  const groups = new Map();
+  projects.forEach((p) => {
+    const industry = (p.industry || '').trim() || 'Other';
+    if (!groups.has(industry)) groups.set(industry, []);
+    groups.get(industry).push(p);
+  });
+
+  // Sort groups A→Z, 'Other' always last
+  const sorted = [...groups.entries()].sort(([a], [b]) => {
+    if (a === 'Other') return 1;
+    if (b === 'Other') return -1;
+    return a.localeCompare(b);
+  });
+
+  block.textContent = '';
+  const layout = document.createElement('div');
+  layout.className = 'ipl-layout';
+
+  sorted.forEach(([industry, items], i) => {
+    const group = document.createElement('div');
+    group.className = 'ipl-group';
+
+    const header = document.createElement('div');
+    header.className = 'ipl-group-header';
+
+    const name = document.createElement('h2');
+    name.className = 'ipl-group-name';
+    name.textContent = industry;
+
+    const count = document.createElement('span');
+    count.className = 'ipl-group-count';
+    count.textContent = `${items.length} project${items.length !== 1 ? 's' : ''}`;
+
+    header.append(name, count);
+
+    const isScrollable = items.length > 5;
+    const row = document.createElement('div');
+    row.className = `ipl-row${isScrollable ? ' ipl-row-scroll' : ''}`;
+
+    if (isScrollable) {
+      const track = document.createElement('div');
+      track.className = 'ipl-row-track';
+      items.forEach((p) => track.append(buildIndustryCard(p)));
+      // Duplicate cards for seamless loop — clones are hidden from AT and keyboard
+      [...track.children].forEach((card) => {
+        const clone = card.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        clone.setAttribute('tabindex', '-1');
+        track.append(clone);
+      });
+      // Scroll distance = one full set of cards including the trailing gap
+      // This matches the exact pixel gap between last original and first clone
+      const CARD_WIDTH = 180;
+      const CARD_GAP = 12;
+      const dist = items.length * (CARD_WIDTH + CARD_GAP);
+      row.style.setProperty('--scroll-dist', `${dist}px`);
+      row.style.setProperty('--scroll-duration', `${(dist / 30).toFixed(1)}s`);
+      row.append(track);
+    } else {
+      items.forEach((p) => row.append(buildIndustryCard(p)));
+    }
+
+    group.append(header, row);
+    layout.append(group);
+
+    if (i < sorted.length - 1) {
+      const sep = document.createElement('hr');
+      sep.className = 'ipl-separator';
+      layout.append(sep);
+    }
+  });
+
+  block.append(layout);
+}
+
 export default async function decorate(block) {
   const link = block.querySelector('a[href]');
   if (!link) return;
@@ -258,10 +381,15 @@ export default async function decorate(block) {
 
   const projects = (json.data || [])
     .filter((p) => p.title)
-    .sort((a, b) => STATUS_ORDER.indexOf(getStatus(a)) - STATUS_ORDER.indexOf(getStatus(b)));
+    .sort((a, b) => a.title.localeCompare(b.title));
 
   window.__projectsCount = projects.length;
   document.dispatchEvent(new CustomEvent('projects:loaded', { detail: { count: projects.length } }));
+
+  if (block.classList.contains('industry-grouped')) {
+    buildIndustryGrouped(block, projects);
+    return;
+  }
 
   block.textContent = '';
 

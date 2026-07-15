@@ -32,6 +32,10 @@ indices:
         select: head > meta[property="article:tag"]
         values: |
           attribute(el, 'content')
+      industry:
+        select: head > meta[name="industry"]
+        value: |
+          attribute(el, "content")
       lastModified:
         select: none
         value: |

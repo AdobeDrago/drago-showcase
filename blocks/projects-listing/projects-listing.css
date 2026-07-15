@@ -413,7 +413,8 @@ h2.ipl-group-name {
 }
 
 .ipl-row-scroll:hover .ipl-row-track,
-.ipl-row-scroll:focus-within .ipl-row-track {
+.ipl-row-scroll:focus-within .ipl-row-track,
+.ipl-row-scroll.ipl-row-touch-pause .ipl-row-track {
   animation-play-state: paused;
 }
 
@@ -424,6 +425,12 @@ h2.ipl-group-name {
 @media (prefers-reduced-motion: reduce) {
   .ipl-row-track {
     animation: none;
+  }
+
+  /* Without animation the track doesn't move, so make the row manually scrollable
+     so cards beyond the viewport edge remain accessible */
+  .ipl-row-scroll {
+    overflow-x: auto;
   }
 }
 

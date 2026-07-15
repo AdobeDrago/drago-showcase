@@ -339,6 +339,9 @@ function buildIndustryGrouped(block, projects) {
       const dist = items.length * (CARD_WIDTH + CARD_GAP);
       row.style.setProperty('--scroll-dist', `${dist}px`);
       row.style.setProperty('--scroll-duration', `${(dist / 30).toFixed(1)}s`);
+      // Touch devices don't fire mouseenter/mouseleave — pause on press instead
+      row.addEventListener('touchstart', () => row.classList.add('ipl-row-touch-pause'), { passive: true });
+      row.addEventListener('touchend', () => row.classList.remove('ipl-row-touch-pause'));
       row.append(track);
     } else {
       items.forEach((p) => row.append(buildIndustryCard(p)));

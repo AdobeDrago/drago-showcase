@@ -234,6 +234,62 @@ function buildTabs(projects, grid, showMoreBtn, getFilter, setFilter) {
   return tabsEl;
 }
 
+// ── Auto-scroll for overflow rows ────────────────────────────────
+
+function startAutoScroll(row) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const SPEED = 0.4;
+  let paused = false;
+  let initialized = false;
+
+  const init = () => {
+    if (initialized) return;
+    // Not yet laid out or content doesn't actually overflow
+    if (row.clientWidth === 0 || row.scrollWidth <= row.clientWidth) return;
+    initialized = true;
+
+    const originalWidth = row.scrollWidth;
+
+    [...row.children].forEach((card) => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.setAttribute('tabindex', '-1');
+      row.append(clone);
+    });
+
+    // Seamless reset point = N cards + N gaps (N×180 + N×12)
+    // = originalWidth (N×180 + (N-1)×12) + 1 flex gap
+    const gapPx = parseFloat(getComputedStyle(row).gap) || 12;
+    const seamlessAt = originalWidth + gapPx;
+
+    const pause = () => { paused = true; };
+    const resume = () => { paused = false; };
+    row.addEventListener('mouseenter', pause);
+    row.addEventListener('mouseleave', resume);
+    row.addEventListener('focusin', pause);
+    row.addEventListener('focusout', resume);
+    row.addEventListener('touchstart', pause, { passive: true });
+    row.addEventListener('touchend', resume);
+
+    function tick() {
+      if (!paused) {
+        row.scrollLeft += SPEED;
+        if (row.scrollLeft >= seamlessAt) row.scrollLeft -= seamlessAt;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  };
+
+  // ResizeObserver fires once the element has a computed size — avoids the
+  // zero-scrollWidth problem that happens when the grid hasn't laid out yet
+  const ro = new ResizeObserver(() => {
+    if (row.clientWidth > 0) { ro.disconnect(); init(); }
+  });
+  ro.observe(row);
+}
+
 // ── Industry-grouped variant ──────────────────────────────────────
 
 function buildIndustryCard(project) {
@@ -321,31 +377,8 @@ function buildIndustryGrouped(block, projects) {
     const row = document.createElement('div');
     row.className = `ipl-row${isScrollable ? ' ipl-row-scroll' : ''}`;
 
-    if (isScrollable) {
-      const track = document.createElement('div');
-      track.className = 'ipl-row-track';
-      items.forEach((p) => track.append(buildIndustryCard(p)));
-      // Duplicate cards for seamless loop — clones are hidden from AT and keyboard
-      [...track.children].forEach((card) => {
-        const clone = card.cloneNode(true);
-        clone.setAttribute('aria-hidden', 'true');
-        clone.setAttribute('tabindex', '-1');
-        track.append(clone);
-      });
-      // Scroll distance = one full set of cards including the trailing gap
-      // This matches the exact pixel gap between last original and first clone
-      const CARD_WIDTH = 180;
-      const CARD_GAP = 12;
-      const dist = items.length * (CARD_WIDTH + CARD_GAP);
-      row.style.setProperty('--scroll-dist', `${dist}px`);
-      row.style.setProperty('--scroll-duration', `${(dist / 30).toFixed(1)}s`);
-      // Touch devices don't fire mouseenter/mouseleave — pause on press instead
-      row.addEventListener('touchstart', () => row.classList.add('ipl-row-touch-pause'), { passive: true });
-      row.addEventListener('touchend', () => row.classList.remove('ipl-row-touch-pause'));
-      row.append(track);
-    } else {
-      items.forEach((p) => row.append(buildIndustryCard(p)));
-    }
+    items.forEach((p) => row.append(buildIndustryCard(p)));
+    if (isScrollable) startAutoScroll(row);
 
     group.append(header, row);
     layout.append(group);

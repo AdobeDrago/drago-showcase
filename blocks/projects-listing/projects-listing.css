@@ -403,35 +403,34 @@ h2.ipl-group-name {
 }
 
 .ipl-row-scroll {
-  overflow: hidden;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  /* scrollbar hidden by default; appears as a thin bar on hover */
+  scrollbar-width: none;
+  padding-bottom: 2px;
 }
 
-.ipl-row-track {
-  display: flex;
-  gap: 12px;
-  animation: ipl-marquee var(--scroll-duration, 30s) linear infinite;
+.ipl-row-scroll:hover {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
-.ipl-row-scroll:hover .ipl-row-track,
-.ipl-row-scroll:focus-within .ipl-row-track,
-.ipl-row-scroll.ipl-row-touch-pause .ipl-row-track {
-  animation-play-state: paused;
+.ipl-row-scroll::-webkit-scrollbar {
+  height: 3px;
 }
 
-@keyframes ipl-marquee {
-  to { transform: translateX(calc(-1 * var(--scroll-dist, 0px))); }
+.ipl-row-scroll::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ipl-row-track {
-    animation: none;
-  }
+.ipl-row-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 99px;
+}
 
-  /* Without animation the track doesn't move, so make the row manually scrollable
-     so cards beyond the viewport edge remain accessible */
-  .ipl-row-scroll {
-    overflow-x: auto;
-  }
+.ipl-row-scroll:hover::-webkit-scrollbar-thumb {
+  background: var(--color-border);
 }
 
 /* ── Logo card ───────────────────────────────────────────────── */

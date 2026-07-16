@@ -32,7 +32,7 @@ Added an `industry` property that reads from `<meta name="industry">` on each pr
 - `decorate()` checks for the `industry-grouped` class and routes to `buildIndustryGrouped()` — the existing tab/grid path is untouched.
 - `buildIndustryGrouped()` fetches the same `query-index.json`, groups projects by the `industry` field (alphabetically A→Z, "Other" last), and renders one `.ipl-group` per industry: a left header column (`h2` name + count) and a right card row.
 - `buildIndustryCard()` renders each project as a logo card: `<img>` sourced from `project.image` with CDN query params stripped to preserve PNG transparency, `filter: brightness(0) invert(1)` makes all logos white on the dark card, and a status dot + label row at the bottom.
-- Rows with >5 projects get a `.ipl-row-track` wrapper whose child cards are duplicated (clones are `aria-hidden` / `tabindex="-1"`). A CSS `@keyframes ipl-marquee` animation translates the track by `--scroll-dist` (computed as `n × (cardWidth + gap)` — the exact pixel width of one full set including the trailing gap before the first clone, ensuring a seamless loop). Duration scales with distance at 30 px/s for consistent speed. Pauses on `:hover` / `:focus-within` via `animation-play-state: paused`. Skipped entirely via `@media (prefers-reduced-motion: reduce)`.
+- Rows with >5 projects get `startAutoScroll()`: a `ResizeObserver` waits until the row has a computed width (avoiding the zero-`scrollWidth` problem caused by the `1fr` grid column not being resolved on first paint), then clones all child cards and appends them. `scrollLeft` is incremented at 0.4 px/frame via `requestAnimationFrame`. The seamless reset fires at `originalWidth + gapPx` — the exact distance from card[0] to clone[0] including the inter-item flex gap. Pauses on `mouseenter`/`focusin`/`touchstart`, resumes on leave/end. Skipped entirely when `prefers-reduced-motion: reduce`. Scrollbar is hidden via `scrollbar-width: none`; appears as a 3 px bar on hover via `::-webkit-scrollbar-thumb` colour toggle.
 
 ### Status labels
 
@@ -60,8 +60,9 @@ Updated `STATUS` map: `draft` → "Prototype Build", `not-started` → "On Hold"
 - [x] White logos render correctly for transparent PNGs; `filter: brightness(0) invert(1)` applied
 - [x] CDN query params stripped from image URLs to preserve PNG transparency
 - [x] Conveyor belt loops seamlessly (no visible jump at reset point)
-- [x] Auto-scroll pauses on hover / focus-within, resumes on leave
+- [x] Auto-scroll pauses on hover / focus-within / touchstart, resumes on leave
 - [x] `prefers-reduced-motion: reduce` disables auto-scroll entirely
+- [x] Scrollbar hidden by default, visible on row hover
 - [x] Heading hierarchy: `h1` (hero) → `h2` (industry group names)
 - [x] Screen reader: cloned cards are `aria-hidden="true"` and `tabindex="-1"`
 - [x] No regressions on default projects-listing (tab/grid variant)

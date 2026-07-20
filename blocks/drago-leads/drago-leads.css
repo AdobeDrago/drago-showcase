@@ -5,7 +5,7 @@
   gap: 16px;
 }
 
-@media (width >= 640px) {
+@media (width >= 600px) {
   .team-leads-grid {
     grid-template-columns: 1fr 1fr;
   }

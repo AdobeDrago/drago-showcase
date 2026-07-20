@@ -59,13 +59,14 @@ header nav a:any-link {
 /* hamburger */
 header nav .nav-hamburger {
   grid-area: hamburger;
-  height: 22px;
   display: flex;
   align-items: center;
 }
 
 header nav .nav-hamburger button {
-  height: 22px;
+  /* 44×44 touch target per WCAG 2.5.5; icon is visually 20×22px centered inside */
+  min-height: 44px;
+  width: 44px;
   margin: 0;
   border: 0;
   border-radius: 0;
@@ -75,6 +76,9 @@ header nav .nav-hamburger button {
   overflow: initial;
   text-overflow: initial;
   white-space: initial;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 header nav .nav-hamburger-icon,
